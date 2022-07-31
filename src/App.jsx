@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useReducer, useState } from 'react';
 import { searchTrendingMovies } from './lib/api/search-trending-movies';
 
 const App = () => {
@@ -38,49 +38,83 @@ const searchTrending = async (
 	}
 };
 
+const ACTIONS = {
+	START_SEARCH: 0,
+	SEARCH_SUCCESS: 1,
+	SEARCH_ERROR: 2,
+	SET_PAGE: 3
+};
+
 // * Custom hook
 const useMovies = () => {
-	const [moviesSearch, setMoviesSearch] = useState({
+	const moviesSearchReducer = (state, action) => {
+		switch (action.type) {
+			case ACTIONS.START_SEARCH:
+				return {
+					...state,
+					error: undefined,
+					loading: true
+				};
+
+			case ACTIONS.SEARCH_SUCCESS:
+				return {
+					...state,
+					movies: action.movies,
+					loading: false
+				};
+
+			case ACTIONS.SEARCH_ERROR:
+				return {
+					...state,
+					movies: undefined,
+					error: action.error,
+					loading: false
+				};
+
+			case ACTIONS.SET_PAGE:
+				return {
+					...state,
+					page: action.page
+				};
+
+			default:
+				throw new Error('Invalid action');
+		}
+	};
+
+	const [moviesSearch, setMoviesSearch] = useReducer(moviesSearchReducer, {
 		movies: undefined,
 		page: 1,
 		error: undefined,
 		loading: false
 	});
 
-	// Start search
 	const startSearch = () => {
 		setMoviesSearch({
-			...moviesSearch,
-			error: undefined,
-			loading: true
+			type: ACTIONS.START_SEARCH
 		});
 	};
 
-	// Search success
 	const searchSuccess = movies => {
 		setMoviesSearch({
-			...moviesSearch,
-			movies,
-			error: undefined,
-			loading: false
+			type: ACTIONS.SEARCH_SUCCESS,
+			movies
 		});
 	};
 
-	// Search error
 	const searchError = error => {
 		setMoviesSearch({
-			...moviesSearch,
-			movies: undefined,
-			error,
-			loading: false
+			type: ACTIONS.SEARCH_ERROR,
+			error
 		});
 	};
 
-	const setPage = newPage =>
-		setMoviesSearch(prevState => ({
-			...prevState,
-			page: newPage
-		}));
+	const setPage = page => {
+		setMoviesSearch({
+			type: ACTIONS.SET_PAGE,
+			page
+		});
+	};
 
 	useEffect(() => {
 		searchTrending(
@@ -93,20 +127,5 @@ const useMovies = () => {
 
 	return { ...moviesSearch, setPage };
 };
-
-// // * Custom hook
-// const useMovies = () => {
-// 	// Cómo convertir 4 estados en 1 solo
-// 	const [movies, setMovies] = useState();
-// 	const [page, setPage] = useState(1);
-// 	const [error, setError] = useState();
-// 	const [loading, setLoading] = useState(false);
-
-// 	useEffect(() => {
-// 		searchTrending(page, setMovies, setError, setLoading);
-// 	}, [page]);
-
-// 	return { movies, page, error, loading, setPage };
-// };
 
 export default App;
