@@ -1,3 +1,4 @@
+import MovieCard from './components/movie-card';
 import { useMoviesSearch } from './lib/hooks/use-movies-search';
 
 const App = () => {
@@ -11,8 +12,18 @@ const App = () => {
 	return (
 		<div>
 			<button onClick={() => setPage(page + 1)}>Página: {page}</button>
-			{movies &&
-				movies.map(movie => <div key={movie.id}>{movie.title}</div>)}
+			<div className='container container-xl mx-auto flex flex-wrap'>
+				{movies &&
+					movies.map(movie => (
+						<MovieCard
+							key={movie.id}
+							title={movie.title}
+							image={movie.image}
+							year={movie.year}
+							rating={movie.rating}
+						/>
+					))}
+			</div>
 		</div>
 	);
 };
