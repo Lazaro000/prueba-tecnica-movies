@@ -19,31 +19,78 @@ const App = () => {
 };
 
 const searchTrending = async (page, setMovies, setError, setLoading) => {
+	// Start search
+	setError();
 	setLoading(true);
 
 	const { success, data, statusCode } = await searchTrendingMovies(page);
 
-	if (success) setMovies(data.movies);
-	else {
+	if (success) {
+		// Search success
+		setMovies(data.movies);
+		setError();
+		setLoading(false);
+	} else {
+		// Search error
 		setMovies();
 		setError(`Error: ${statusCode}`);
+		setLoading(false);
 	}
-
-	setLoading(false);
 };
 
 // * Custom hook
 const useMovies = () => {
-	const [movies, setMovies] = useState();
-	const [page, setPage] = useState(1);
-	const [error, setError] = useState();
-	const [loading, setLoading] = useState(false);
+	const [moviesSearch, setMoviesSearch] = useState({
+		movies: undefined,
+		page: 1,
+		error: undefined,
+		loading: false
+	});
+
+	const setMovies = newMovies =>
+		setMoviesSearch(prevState => ({
+			...prevState,
+			movies: newMovies
+		}));
+
+	const setPage = newPage =>
+		setMoviesSearch(prevState => ({
+			...prevState,
+			page: newPage
+		}));
+
+	const setError = newError =>
+		setMoviesSearch(prevState => ({
+			...prevState,
+			error: newError
+		}));
+
+	const setLoading = newLoading =>
+		setMoviesSearch(prevState => ({
+			...prevState,
+			loading: newLoading
+		}));
 
 	useEffect(() => {
-		searchTrending(page, setMovies, setError, setLoading);
-	}, [page]);
+		searchTrending(moviesSearch.page, setMovies, setError, setLoading);
+	}, [moviesSearch.page]);
 
-	return { movies, page, error, loading, setPage };
+	return { ...moviesSearch, setPage };
 };
+
+// // * Custom hook
+// const useMovies = () => {
+// 	// Cómo convertir 4 estados en 1 solo
+// 	const [movies, setMovies] = useState();
+// 	const [page, setPage] = useState(1);
+// 	const [error, setError] = useState();
+// 	const [loading, setLoading] = useState(false);
+
+// 	useEffect(() => {
+// 		searchTrending(page, setMovies, setError, setLoading);
+// 	}, [page]);
+
+// 	return { movies, page, error, loading, setPage };
+// };
 
 export default App;
