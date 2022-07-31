@@ -18,23 +18,23 @@ const App = () => {
 	);
 };
 
-const searchTrending = async (page, setMovies, setError, setLoading) => {
+const searchTrending = async (
+	page,
+	startSearch,
+	searchSuccess,
+	searchError
+) => {
 	// Start search
-	setError();
-	setLoading(true);
+	startSearch();
 
 	const { success, data, statusCode } = await searchTrendingMovies(page);
 
 	if (success) {
 		// Search success
-		setMovies(data.movies);
-		setError();
-		setLoading(false);
+		searchSuccess(data.movies);
 	} else {
 		// Search error
-		setMovies();
-		setError(`Error: ${statusCode}`);
-		setLoading(false);
+		searchError(`Error: ${statusCode}`);
 	}
 };
 
@@ -47,11 +47,34 @@ const useMovies = () => {
 		loading: false
 	});
 
-	const setMovies = newMovies =>
-		setMoviesSearch(prevState => ({
-			...prevState,
-			movies: newMovies
-		}));
+	// Start search
+	const startSearch = () => {
+		setMoviesSearch({
+			...moviesSearch,
+			error: undefined,
+			loading: true
+		});
+	};
+
+	// Search success
+	const searchSuccess = movies => {
+		setMoviesSearch({
+			...moviesSearch,
+			movies,
+			error: undefined,
+			loading: false
+		});
+	};
+
+	// Search error
+	const searchError = error => {
+		setMoviesSearch({
+			...moviesSearch,
+			movies: undefined,
+			error,
+			loading: false
+		});
+	};
 
 	const setPage = newPage =>
 		setMoviesSearch(prevState => ({
@@ -59,20 +82,13 @@ const useMovies = () => {
 			page: newPage
 		}));
 
-	const setError = newError =>
-		setMoviesSearch(prevState => ({
-			...prevState,
-			error: newError
-		}));
-
-	const setLoading = newLoading =>
-		setMoviesSearch(prevState => ({
-			...prevState,
-			loading: newLoading
-		}));
-
 	useEffect(() => {
-		searchTrending(moviesSearch.page, setMovies, setError, setLoading);
+		searchTrending(
+			moviesSearch.page,
+			startSearch,
+			searchSuccess,
+			searchError
+		);
 	}, [moviesSearch.page]);
 
 	return { ...moviesSearch, setPage };
