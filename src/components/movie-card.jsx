@@ -10,7 +10,7 @@ const MovieCard = ({ title, image, year, rating }) => {
 					src={`${API_IMAGE_HOST}${image}`}
 				/>
 				<h2>{title}</h2>
-				<span>{rating}</span>
+				<span className='mr-2'>{rating}</span>
 				<span>{year}</span>
 			</div>
 		</div>
