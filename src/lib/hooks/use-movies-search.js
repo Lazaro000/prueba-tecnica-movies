@@ -1,4 +1,4 @@
-import { useEffect, useReducer } from 'react';
+import { useEffect, useReducer, useRef } from 'react';
 import { searchMoviesApi } from '../api/search-movies-api';
 import {
 	moviesSearchReducer,
@@ -27,54 +27,55 @@ export const useMoviesSearch = () => {
 		MOVIES_SEARCH_INITIAL_STATE
 	);
 
-	const startSearch = () => {
+	const isInitialized = useRef(false);
+
+	const startSearch = () =>
 		setMoviesSearch({
 			type: MOVIES_SEARCH_ACTIONS.START_SEARCH
 		});
-	};
 
-	const searchSuccess = movies => {
+	const searchSuccess = movies =>
 		setMoviesSearch({
 			type: MOVIES_SEARCH_ACTIONS.SEARCH_SUCCESS,
 			movies
 		});
-	};
 
-	const searchError = error => {
+	const searchError = error =>
 		setMoviesSearch({
 			type: MOVIES_SEARCH_ACTIONS.SEARCH_ERROR,
 			error
 		});
-	};
 
-	const setSearchTerm = searchTerm => {
+	const setSearchTerm = searchTerm =>
 		setMoviesSearch({
 			type: MOVIES_SEARCH_ACTIONS.SET_SEARCH_TERM,
 			searchTerm
 		});
-	};
 
-	const setPage = page => {
+	const setPage = page =>
 		setMoviesSearch({
 			type: MOVIES_SEARCH_ACTIONS.SET_PAGE,
 			page
 		});
-	};
 
 	useEffect(() => {
-		const timeoutId = setTimeout(
-			() =>
-				searchMovies(
-					moviesSearch.searchTerm,
-					moviesSearch.page,
-					startSearch,
-					searchSuccess,
-					searchError
-				),
-			200
-		);
+		const searchTimeout = () =>
+			searchMovies(
+				moviesSearch.searchTerm,
+				moviesSearch.page,
+				startSearch,
+				searchSuccess,
+				searchError
+			);
 
-		return () => clearTimeout(timeoutId);
+		if (!isInitialized.current) {
+			searchTimeout();
+			isInitialized.current = true;
+		} else {
+			const timeoutId = setTimeout(searchTimeout, 200);
+
+			return () => clearTimeout(timeoutId);
+		}
 	}, [moviesSearch.searchTerm, moviesSearch.page]);
 
 	return { ...moviesSearch, setSearchTerm, setPage };
