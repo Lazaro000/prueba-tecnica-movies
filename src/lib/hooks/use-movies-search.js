@@ -1,29 +1,24 @@
-import { useEffect, useReducer } from 'react';
-import { searchTrendingMovies } from '../api/search-trending-movies';
+import { useEffect, useReducer, useRef } from 'react';
+import { searchMoviesApi } from '../api/search-movies-api';
 import {
 	moviesSearchReducer,
 	MOVIES_SEARCH_ACTIONS,
 	MOVIES_SEARCH_INITIAL_STATE
 } from '../reducers/movies-search.reducer';
 
-const searchTrending = async (
+const searchMovies = async (
+	search,
 	page,
 	startSearch,
 	searchSuccess,
 	searchError
 ) => {
-	// Start search
 	startSearch();
 
-	const { success, data, statusCode } = await searchTrendingMovies(page);
+	const { success, data, statusCode } = await searchMoviesApi(search, page);
 
-	if (success) {
-		// Search success
-		searchSuccess(data.movies);
-	} else {
-		// Search error
-		searchError(`Error: ${statusCode}`);
-	}
+	if (success) searchSuccess(data.movies, data.totalPages);
+	else searchError(`Error: ${statusCode}`);
 };
 
 export const useMoviesSearch = () => {
@@ -32,41 +27,57 @@ export const useMoviesSearch = () => {
 		MOVIES_SEARCH_INITIAL_STATE
 	);
 
-	const startSearch = () => {
+	const isInitialized = useRef(false);
+
+	const startSearch = () =>
 		setMoviesSearch({
 			type: MOVIES_SEARCH_ACTIONS.START_SEARCH
 		});
-	};
 
-	const searchSuccess = movies => {
+	const searchSuccess = (movies, totalPages) =>
 		setMoviesSearch({
 			type: MOVIES_SEARCH_ACTIONS.SEARCH_SUCCESS,
-			movies
+			movies,
+			totalPages
 		});
-	};
 
-	const searchError = error => {
+	const searchError = error =>
 		setMoviesSearch({
 			type: MOVIES_SEARCH_ACTIONS.SEARCH_ERROR,
 			error
 		});
-	};
 
-	const setPage = page => {
+	const setSearchTerm = searchTerm =>
+		setMoviesSearch({
+			type: MOVIES_SEARCH_ACTIONS.SET_SEARCH_TERM,
+			searchTerm
+		});
+
+	const setPage = page =>
 		setMoviesSearch({
 			type: MOVIES_SEARCH_ACTIONS.SET_PAGE,
 			page
 		});
-	};
 
 	useEffect(() => {
-		searchTrending(
-			moviesSearch.page,
-			startSearch,
-			searchSuccess,
-			searchError
-		);
-	}, [moviesSearch.page]);
+		const searchTimeout = () =>
+			searchMovies(
+				moviesSearch.searchTerm,
+				moviesSearch.page,
+				startSearch,
+				searchSuccess,
+				searchError
+			);
 
-	return { ...moviesSearch, setPage };
+		if (!isInitialized.current) {
+			searchTimeout();
+			isInitialized.current = true;
+		} else {
+			const timeoutId = setTimeout(searchTimeout, 200);
+
+			return () => clearTimeout(timeoutId);
+		}
+	}, [moviesSearch.searchTerm, moviesSearch.page]);
+
+	return { ...moviesSearch, setSearchTerm, setPage };
 };
