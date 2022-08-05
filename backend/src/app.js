@@ -1,6 +1,7 @@
 import express from "express";
 import { config as dotenvConfig } from "dotenv";
 import uuid from "uuid-random";
+import { findUserById, findUserByEmail, addUser } from "./bbdd.js";
 
 const { test: validateUuid } = uuid;
 
@@ -10,9 +11,6 @@ const expressApp = express();
 
 // Middleware
 expressApp.use(express.json());
-
-// Memory BBDD
-const users = [];
 
 // Regex validations
 const emailRegex =
@@ -40,20 +38,18 @@ expressApp.post("/register", (req, res) => {
     return res.status(400).send("El formato de la contraseña no es correcto");
 
   // Validar que el usuario es único en persistencia (id, email)
-  const existingUser = users.find(
-    (user) => user.id === id || user.email === email
-  );
+  const existingUser = findUserById(id) || findUserByEmail(email);
+
   if (existingUser)
     return res.status(409).send("El usuario ya se encuentra registrado");
 
-  users.push({
+  addUser({
     id,
     name,
     email,
     password,
   });
 
-  console.log(users);
   return res.send("El usuario se ha registrado de forma correcta");
 });
 
