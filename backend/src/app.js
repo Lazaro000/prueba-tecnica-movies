@@ -1,11 +1,12 @@
+import { createServer } from "http";
 import express from "express";
-import { registerRoutes } from "./routes.js";
+import { registerUserRoutes } from "./routes/user-routes.js";
 
 const expressApp = express();
 
 // Middleware
 expressApp.use(express.json());
 
-registerRoutes(expressApp);
+registerUserRoutes(expressApp);
 
-export default expressApp;
+export const httpServer = createServer(expressApp);

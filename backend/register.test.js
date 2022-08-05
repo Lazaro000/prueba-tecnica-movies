@@ -1,6 +1,6 @@
 import test from "ava";
 import fetch from "node-fetch";
-import app from "./src/app.js";
+import { httpServer as app } from "./src/app.js";
 
 const PORT = 3015;
 const ENDPOINT = `http://localhost:${PORT}/register`;
@@ -152,4 +152,8 @@ test("Register with bad email", async (t) => {
   } catch (err) {
     t.fail(err);
   }
+});
+
+test.after(() => {
+  app.close();
 });

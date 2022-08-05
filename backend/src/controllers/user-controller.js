@@ -1,5 +1,5 @@
-import { findUserById, findUserByEmail, addUser } from "./bbdd.js";
-import { validateRegisterBody } from "./validate-register-body.js";
+import { findUserById, findUserByEmail, addUser } from "../ddbb.js";
+import { validateRegisterBody } from "../validations/validate-register-body.js";
 
 export const userRegisterController = (req, res) => {
   // Validación de campos
