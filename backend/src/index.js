@@ -1,18 +1,12 @@
-import { httpServer } from "./app.js";
 import { config as dotenvConfig } from "dotenv";
-import { MikroORM } from "@mikro-orm/core";
+import { initializeHttpServer } from "./config/initialize-http.js";
+import { initializeOrm } from "./config/initialize-orm.js";
 
 dotenvConfig();
 
 const bootstrap = async () => {
-  await MikroORM.init({
-    port: process.env.POSTGRESQL_PORT,
-    user: process.env.POSTGRESQL_USER,
-    password: process.env.POSTGRESQL_PASSWORD,
-    entities: ["./entities"],
-    dbName: "pruebaTecnica",
-    type: "postgresql",
-  });
+  await initializeOrm();
+  const httpServer = initializeHttpServer();
 
   httpServer.listen(process.env.PORT, () =>
     console.log(
