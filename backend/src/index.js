@@ -1,7 +1,6 @@
 import { httpServer } from "./app.js";
 import { config as dotenvConfig } from "dotenv";
 import { MikroORM } from "@mikro-orm/core";
-import { userSchema } from "./entities/user.js";
 
 dotenvConfig();
 
@@ -10,7 +9,7 @@ const bootstrap = async () => {
     port: process.env.POSTGRESQL_PORT,
     user: process.env.POSTGRESQL_USER,
     password: process.env.POSTGRESQL_PASSWORD,
-    entities: [userSchema],
+    entities: ["./entities"],
     dbName: "pruebaTecnica",
     type: "postgresql",
   });
