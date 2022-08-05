@@ -1,6 +1,6 @@
 import { config as dotenvConfig } from "dotenv";
-import { initializeHttpServer } from "./config/initialize-http.js";
-import { initializeOrm } from "./config/initialize-orm.js";
+import { initializeHttpServer } from "./infrastructure/config/initialize-http.js";
+import { initializeOrm } from "./infrastructure/config/initialize-orm.js";
 
 dotenvConfig();
 

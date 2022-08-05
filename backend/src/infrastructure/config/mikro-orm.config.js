@@ -1,5 +1,5 @@
-import { userSchema } from "../entities/user.js";
 import { SqlHighlighter } from "@mikro-orm/sql-highlighter";
+import { userSchema } from "../schemas/user-schema.js";
 
 /** @type {import('@mikro-orm/core').Options} */
 export const mikroORMConfig = {
@@ -9,6 +9,6 @@ export const mikroORMConfig = {
   entities: [userSchema],
   dbName: "postgres",
   type: "postgresql",
-  debug: true,
+  debug: false,
   highlighter: new SqlHighlighter(),
 };

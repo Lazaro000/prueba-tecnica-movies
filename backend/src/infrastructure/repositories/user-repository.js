@@ -1,5 +1,5 @@
-import { getEntityManager } from "./config/initialize-orm.js";
-import { User } from "./entities/user.js";
+import { getEntityManager } from "../config/initialize-orm.js";
+import { User } from "../../domain/entities/user.js";
 
 export class UserRepository {
   constructor() {

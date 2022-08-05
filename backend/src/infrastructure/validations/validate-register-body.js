@@ -3,7 +3,7 @@ import {
   validateId,
   validateName,
   validatePassword,
-} from "./user-validation.js";
+} from "../../domain/validations/user-validation.js";
 
 export const validateRegisterBody = (body) => {
   const { id, name, email, password } = body;
