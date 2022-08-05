@@ -30,5 +30,10 @@
     "express": "4.18.1",
     "node-fetch": "3.2.10",
     "uuid-random": "1.3.2"
+  },
+  "mikro-orm": {
+    "configPaths": [
+      "./src/config/mikro-orm.config.js"
+    ]
   }
 }
