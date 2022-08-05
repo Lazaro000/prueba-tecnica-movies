@@ -1,9 +1,8 @@
 import test from "ava";
 import fetch from "node-fetch";
+import app from "./src/app.js";
 
-const app = require("./src/app");
-
-const PORT = 3010;
+const PORT = 3015;
 const ENDPOINT = `http://localhost:${PORT}/register`;
 
 test.before(() => {
@@ -53,6 +52,7 @@ test("Register with same id", async (t) => {
     });
 
     t.false(response.ok);
+    t.is(response.status, 409);
   } catch (err) {
     t.fail(err);
   }
@@ -76,6 +76,79 @@ test("Register with same email", async (t) => {
     });
 
     t.false(response.ok);
+    t.is(response.status, 409);
+  } catch (err) {
+    t.fail(err);
+  }
+});
+
+test("Register with bad id", async (t) => {
+  const newUser = {
+    id: "7f613ad3-d279-4c9d-9f-837d15e2743b",
+    name: "German",
+    email: "german@gmail.com",
+    password: "test123456",
+  };
+
+  try {
+    const response = await fetch(ENDPOINT, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(newUser),
+    });
+
+    t.false(response.ok);
+    t.is(response.status, 400);
+  } catch (err) {
+    t.fail(err);
+  }
+});
+
+test("Register with bad name", async (t) => {
+  const newUser = {
+    id: "7f613ad3-d279-4c9d-819f-837d15e2743b",
+    name: "German2",
+    email: "german@gmail.com",
+    password: "test123456",
+  };
+
+  try {
+    const response = await fetch(ENDPOINT, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(newUser),
+    });
+
+    t.false(response.ok);
+    t.is(response.status, 400);
+  } catch (err) {
+    t.fail(err);
+  }
+});
+
+test("Register with bad email", async (t) => {
+  const newUser = {
+    id: "7f613ad3-d279-4c9d-819f-837d15e2743b",
+    name: "German",
+    email: "german@",
+    password: "test123456",
+  };
+
+  try {
+    const response = await fetch(ENDPOINT, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(newUser),
+    });
+
+    t.false(response.ok);
+    t.is(response.status, 400);
   } catch (err) {
     t.fail(err);
   }

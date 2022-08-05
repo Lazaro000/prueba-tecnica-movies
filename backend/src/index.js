@@ -1,4 +1,6 @@
 import expressApp from "./app.js";
+import { config as dotenvConfig } from "dotenv";
+dotenvConfig();
 
 expressApp.listen(process.env.PORT, () =>
   console.log(
