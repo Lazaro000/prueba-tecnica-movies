@@ -1,20 +1,19 @@
 import { createServer } from "http";
 import express from "express";
 import { registerUserRoutes } from "../routes/user-routes.js";
-import { getEntityManager } from "./initialize-orm.js";
-import { RequestContext } from "@mikro-orm/core";
+import { contextBdMiddleware } from "../middlewares/context-bd-middleware.js";
+import { errorMiddleware } from "../middlewares/error-middleware.js";
 
 export const initializeHttpServer = () => {
   const expressApp = express();
 
-  expressApp.use((_, __, next) => {
-    const entityManager = getEntityManager();
-    RequestContext.create(entityManager, next);
-  });
+  expressApp.use(contextBdMiddleware);
 
   expressApp.use(express.json());
 
   registerUserRoutes(expressApp);
+
+  expressApp.use(errorMiddleware);
 
   const httpServer = createServer(expressApp);
 

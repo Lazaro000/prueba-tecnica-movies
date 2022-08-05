@@ -30,6 +30,7 @@
     "@mikro-orm/sql-highlighter": "1.0.1",
     "dotenv": "16.0.1",
     "express": "4.18.1",
+    "jsonwebtoken": "8.5.1",
     "node-fetch": "3.2.10",
     "uuid-random": "1.3.2"
   },
