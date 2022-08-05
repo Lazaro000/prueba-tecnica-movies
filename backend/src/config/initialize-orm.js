@@ -1,7 +1,7 @@
 import { MikroORM } from "@mikro-orm/core";
 import { mikroORMConfig } from "./mikro-orm.config.js";
 
-let orm;
+let orm, entityManager;
 
 const configDDBB = async () => {
   const schemaGenerator = orm.getSchemaGenerator();
@@ -15,9 +15,11 @@ export const initializeOrm = async () => {
   if (!isConnected) throw new Error("Failed to connect to database");
 
   await configDDBB();
+
+  entityManager = orm.em;
+  console.log(entityManager);
 };
 
 export const getEntityManager = () => {
-  if (!orm) throw new Error("Database is not connected");
-  return orm.em.fork();
+  return entityManager;
 };
