@@ -1,0 +1,29 @@
+@hostname = localhost
+@port = 3010
+@host = {{hostname}}:{{port}}
+@contentType = application/json
+
+### 
+
+# @name Routes
+@registerUser = register
+
+###
+# @name userVariables
+@user-id = "beb76ac5-e861-4d53-9206-e28359c906f5"
+@user-name = "Lazaro"
+@user-email = "lazaro@gmail.com"
+@user-password = "test123456"
+
+###
+
+# @name createUser
+POST http://{{host}}/{{registerUser}} HTTP/1.1
+content-type: {{contentType}}
+
+{
+    "id": {{user-id}},
+    "name": {{user-name}},
+    "email": {{user-email}},
+    "password": {{user-password}}
+}

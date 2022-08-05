@@ -5,11 +5,13 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "dev": "nodemon src/index.js"
+    "dev": "nodemon src/index.js",
+    "test": "ava"
   },
   "author": "Lazaro",
   "license": "ISC",
   "devDependencies": {
+    "ava": "4.3.1",
     "eslint": "8.20.0",
     "eslint-config-prettier": "8.5.0",
     "eslint-config-standard": "17.0.0",
@@ -21,6 +23,7 @@
   "dependencies": {
     "dotenv": "16.0.1",
     "express": "4.18.1",
-    "node-fetch": "3.2.10"
+    "node-fetch": "3.2.10",
+    "uuid-random": "1.3.2"
   }
 }
